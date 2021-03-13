@@ -1,0 +1,7 @@
+git commands command line must be in C:\Users\HDip\Desktop\WSEProject2021
+//add most recent changes
+git add --all 
+//commit the changes
+git commit -m "name"
+//push to git hub
+git push

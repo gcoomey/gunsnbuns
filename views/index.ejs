@@ -1,0 +1,371 @@
+<link rel="stylesheet" href="css/themes/my-custom-theme.css" />
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+
+<!--homepage-->
+<div data-role="page" id="homepage" >
+
+	<div data-role="header">
+		<h1>Home</h1>
+	</div><!-- /header -->
+
+	<div role="main" class="ui-content">
+		<p>Welcome to Dee's Doughnuts</p>
+        
+        
+        <a href="#register" class="ui-btn">Register</a>
+        <a href="#login" class="ui-btn">Login</a>
+        
+        
+        
+	</div><!-- /content -->
+
+	<div data-role="footer">
+		<h4>Copyright GC 2021</h4>
+	</div><!-- /footer -->
+</div><!-- /page -->
+
+
+<!--registration page-->
+<div data-role="page" id="register">
+
+	<div data-role="header">
+		<h1>Register</h1>
+		<a href="#homepage" class="ui-btn">Home</a>
+	</div><!-- /header -->
+
+	<div role="main" class="ui-content">
+	
+    <!--text input boxes-->
+    Username <input type="text" id="username"/> <br>
+
+    E-mail <input type="text" id="email"/> <br>
+    
+    Password <input type="text" id="password"/> <br>
+	
+	Account Type <input type="text" id="acctype"/> <br>
+
+    <button id="submitbutton"> Submit Button </button>
+    
+    
+    
+	</div><!-- /content -->
+
+	<div data-role="footer">
+		<h4>Copyright GC 2021</h4>
+	</div><!-- /footer -->
+</div><!-- /page -->
+
+
+
+<script>
+// when the 'submit' button is clicked
+$( "#submitbutton" ).click(function(event) {
+  // stop the default redirect of the browser
+  event.preventDefault();
+  
+  // grab the values
+  var username = $('#username').val();
+  var email = $('#email').val();
+  var password = $('#password').val();
+  var acctype = $('#acctype').val();
+  
+  var isValid = true;
+  
+  if(username == ""){
+     alert("Please enter a username");
+     isValid = false;
+  }
+  if(!email.includes("@")){
+     alert("Please enter a valid email");
+     isValid = false;
+  }
+
+ // only send the data to the database, if the parameter is true.
+  if(isValid == true){
+      // send the data to the server side
+      $.post( "/putInDatabase", { username: username, email: email, password:password, acctype:acctype })
+      .done(function( data ) {
+        alert( "Data Loaded: " + data );
+      });
+  }
+  
+  
+  
+});
+
+</script>
+
+
+
+
+
+
+
+<!--Login Page-->
+<div data-role="page" id="login" >
+
+	<div data-role="header">
+		<h1>Log in to your account</h1>
+		
+		<a href="#homepage" class="ui-btn">Home</a>
+	</div><!-- /header -->
+
+	<div role="main" class="ui-content">
+		<p>Access your account</p>
+        
+        
+        Username <input type="text" id="loginUsername"/> <br>
+        Password <input type="text" id="loginPassword"/> <br>
+
+        
+         <button id="loginbutton"> Login </button>
+         
+         
+        
+	</div><!-- /content -->
+
+	<div data-role="footer">
+		<h4>Copyright GC 2021</h4>
+	</div><!-- /footer -->
+</div><!-- /page -->
+
+<script>
+// when the 'Login' button is clicked
+$( "#loginbutton" ).click(function(event) {
+  // stop the default redirect of the browser
+  event.preventDefault();
+  
+  // grabbing the values
+  var un = $('#loginUsername').val();
+  var pw = $('#loginPassword').val();
+  
+  if(un == "")
+  {
+	alert ("Please enter a username");
+	}
+	
+   if(pw == "")
+  {
+	alert ("Please enter a password");
+	}
+	
+  $.post( "/checkTheLogin", { username: un, password: pw })
+      .done(function( data ) {
+	  //say what account type is
+        alert( "Data Loaded: " + data );
+		
+		if(data.includes("customer")){
+		
+	// move to the customer dashboard
+	   window.location = "/#customerdash";
+	
+	}
+	else if(data.includes("driver")){
+		
+	// move to the driver dashboard
+	}
+	
+	else if(data.includes("manager")){
+	
+	 // make a call to the server side to get the data
+            $.get( "/getManagerData", function( data ) {
+            // display the data on the manager page
+                $( "#managerOutput" ).html( data );
+	});
+		
+	// move to the manager dashboard
+	   window.location = "/#manager";
+	}
+	
+	
+    });
+  
+  
+ }); 
+  
+</script>
+
+<script>
+var myCart = [];
+
+</script>
+
+<!--Customer Dashboard with add to cart-->
+<div data-role="page" id="customerdash">
+
+	<div data-role="header">
+		<h1>Choose your delicious doughnuts</h1>
+		<a href="#homepage" class="ui-btn">Home</a>
+	</div><!-- /header -->
+
+	<div role="main" class="ui-content">
+		<p>Choose from our delicious range of homemade doughnuts, all lovingly prepared in our on site		bakery</p>
+        
+        
+ <div class="ui-field-contain">
+    <label for="select-native-2">Chocolate Doughnut</label>
+   
+<select id="chocolate_doughnut_qty" name="select-native-2" id="select-native-2" data-mini="true">
+        <option value=""></option>
+		<option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+    </select>
+<button id="addtocart" onclick="addToCart('chocolate_doughnut_qty')"> Add To Cart </button>
+
+</div>
+ <div class="ui-field-contain">
+    <label for="select-native-2">Ring Doughnut</label>
+   
+<select id="ring_doughnut_qty" name="select-native-2" id="select-native-2" data-mini="true">
+        <option value=""></option>
+		<option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+    </select>
+<button id="addtocart" onclick="addToCart('ring_doughnut_qty')"> Add To Cart </button>
+
+</div>
+        
+     <button id ="goToCheckout"> Checkout </button>    
+        
+	</div><!-- /content -->
+
+	<div data-role="footer">
+		<h4>Copyright GC 2021</h4>
+	</div><!-- /footer -->
+</div><!-- /page -->
+
+<div data-role="page" id="checkoutreview" >
+
+	<div data-role="header">
+		<h1>Review your order</h1>
+		<a href="#homepage" class="ui-btn">Home</a>
+	</div><!-- /header -->
+
+	<div role="main" class="ui-content">
+		<p>Check your order before continuing to the payment page</p>
+        
+		<div id="products">
+		</div>
+        
+         <button id="insertintodb">Complete Checkout</button>
+         
+         
+        
+	</div><!-- /content -->
+
+	<div data-role="footer">
+		<h4>Copyright GC 2021</h4>
+	</div><!-- /footer -->
+</div><!-- /page -->
+
+<script>
+
+$("#insertintodb").click(function() {
+		//get the customer username
+		var orderby = $('#loginUsername').val();
+	
+		
+		//get the list of products from cart
+		var items = myCart.toString();
+		 
+ 
+      $.post( "/completeCheckout", { orderby: orderby, items: items })
+      .done(function( data ) {
+        alert( "Data Loaded: " + data );
+      });
+
+
+});
+
+
+
+
+</script>
+ 
+<script>
+
+ $( "#goToCheckout").click(function(){
+ 
+	//update div tag with the shopping cart
+	
+	var cartItems = myCart.toString().split(',');
+	
+	// to prevent any duplication, wipe the 'products' div
+	$('#products').html('');
+	
+	
+	//for each record append them to the 'products' div	
+	for (var i=0; i<cartItems.length; i++){
+	$('#products').append(cartItems[i] + '<br>');
+	}
+	
+	
+ 
+ 
+ 
+ 
+	// move to the checkout review
+	window.location="/#checkoutreview";
+	});
+	
+	
+function addToCart(itemName){
+    // finding out the name of the ITEM we are adding
+    var item = itemName;
+	console.log(item);
+    
+    // dynamically find out the qty using jquery selector
+	var qty = $('#'+item).children("option:selected").val();
+	console.log(qty);
+    
+    // search the cart and see if we already added
+    // the item. If we did, remove the old qty.
+
+    myCart.forEach(function(itemCurrent, index, array) {
+           
+           
+           
+           if(itemCurrent.includes(item)){
+              console.log("Removing previous reference to " + item);
+              myCart.pop(index);
+           }
+    });
+    
+    
+    // add the item to the cart
+    myCart.push(item + '-' + qty);
+    
+    alert(myCart);
+
+}
+</script>
+<!--Manager Page-->
+<div data-role="page" id="manager">
+
+	<div data-role="header">
+		<h1>Management Dashboard</h1>
+		<a href="#homepage" class="ui-btn">Home</a>
+	</div><!-- /header -->
+
+	<div role="main" class="ui-content">
+		<p>Recent customer orders</p>
+         
+     <div id ="managerOutput"> 
+
+	</div>	
+
+                      
+         
+        
+	</div><!-- /content -->
+
+	<div data-role="footer">
+		<h4>Copyright GC 2021</h4>
+	</div><!-- /footer -->
+</div><!-- /page -->
