@@ -164,23 +164,34 @@ $( "#loginbutton" ).click(function(event) {
 	}
 	else if(data.includes("driver")){
 		
-	// move to the driver dashboard
-	}
 	
-	else if(data.includes("manager")){
-	
-	 // make a call to the server side to get the data
-            $.get( "/getManagerData", function( data ) {
-            // display the data on the manager page
-                $( "#managerOutput" ).html( data );
+		 // make a call to the server side to get the data
+            $.get( "/getDriverData", function( data ) {
+            // display the data on the driver page
+                $( "#driverOutput" ).html( data );
 	});
 		
-	// move to the manager dashboard
-	   window.location = "/#manager";
+	// move to the driver dashboard
+	   window.location = "/#driver";
 	}
 	
-	
-    });
+	        else if(data.includes("manager")){
+        
+        
+           // make a call to the severside to get the data!
+            $.get( "/getManagerData", function( data ) {
+            // throw the data onto the manager page
+                $( "#managerOutput" ).html( data );
+          
+            });
+                
+        
+           // move to the manager dashboard
+           window.location="/#manager";
+        }
+        
+        
+      });
   
   
  }); 
@@ -194,7 +205,9 @@ var myCart = [];
 
 <!--Customer Dashboard with add to cart-->
 <div data-role="page" id="customerdash">
-
+	
+	
+	
 	<div data-role="header">
 		<h1>Choose your delicious doughnuts</h1>
 		<a href="#homepage" class="ui-btn">Home</a>
@@ -290,6 +303,21 @@ $("#insertintodb").click(function() {
  
 <script>
 
+$(document).on("pagecreate",function(event){
+
+$.get("/checkIfTimeLeft",function( data ) {
+	
+		if(data.includes("ok")){
+		}else{
+		
+		//session expired
+		window.location="/";
+		}
+	});
+	
+});
+
+
  $( "#goToCheckout").click(function(){
  
 	//update div tag with the shopping cart
@@ -358,10 +386,49 @@ function addToCart(itemName){
          
      <div id ="managerOutput"> 
 
-	</div>	
+	</div>
+	
+	</div><!-- /content -->
 
-                      
+	<div data-role="footer">
+		<h4>Copyright GC 2021</h4>
+	</div><!-- /footer -->
+</div><!-- /page -->
+ 
+<!--Driver Page-->
+<div data-role="page" id="driver">
+
+	<div data-role="header">
+		<h1>Driver Dashboard</h1>
+		<a href="#homepage" class="ui-btn">Home</a>
+	</div><!-- /header -->
+
+	<div role="main" class="ui-content">
+		<p>Orders for Delivery</p>
          
+     <div id ="driverOutput"> 
+
+	</div>	                    
+    <script
+  
+  src="https://code.jquery.com/jquery-3.6.0.js"
+  integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+  crossorigin="anonymous"> </script>
+  
+ <span> The current temperature is <div id="currentTemp"> </div> degrees in <div id="location"></div> city.</span>
+ 
+ <script>
+
+
+$.getJSON( "http://api.weatherstack.com/current?access_key=e01f81992b8fa49e7fb20914c3b2d8db&query=Cork", function( json ) {
+  console.log("JSON Data: " +json.current.temperature +json.location.name); 
+  
+  $('#currentTemp').html(json.current.temperature);
+  $('#location').html (json.location.name);
+  
+ });
+</script>
+       
         
 	</div><!-- /content -->
 
