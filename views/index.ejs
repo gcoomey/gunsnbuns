@@ -52,7 +52,7 @@
 	</div><!-- /content -->
 
 	<div data-role="footer">
-		<h4>Copyright GC 2021</h4>
+		<h4>CopyrightGC2021</h4>
 	</div><!-- /footer -->
 </div><!-- /page -->
 
@@ -106,7 +106,7 @@ $( "#submitbutton" ).click(function(event) {
 	</div><!-- /header -->
 
 	<div role="main" class="ui-content">
-		<p>Access your account</p>
+		<p>Login to your account</p>
                 
         Username <input type="text" id="loginUsername"/> <br>
         Password <input type="text" id="loginPassword"/> <br>
@@ -119,7 +119,7 @@ $( "#submitbutton" ).click(function(event) {
 	</div><!-- /content -->
 
 	<div data-role="footer">
-		<h4>Copyright GC 2021</h4>
+		<h4>CopyrightGC2021</h4>
 	</div><!-- /footer -->
 </div><!-- /page -->
 
@@ -136,12 +136,10 @@ $( "#loginbutton" ).click(function(event) {
   if(un == "")
   {
 	alert ("Please enter a username");
-	}
-	
-   if(pw == "")
-  {
+  }
+   if(pw == ""){
 	alert ("Please enter a password");
-	}
+  }
 	
   $.post( "/checkTheLogin", { username: un, password: pw })
       .done(function( data ) {
@@ -152,11 +150,9 @@ $( "#loginbutton" ).click(function(event) {
 		
 	// move to the customer dashboard
 	   window.location = "/#customerdash";
-	
-	}
+		}
 	else if(data.includes("driver")){
 		
-	
 		 // make a call to the server side to get the data
             $.get( "/getDriverData", function( data ) {
             // display the data on the driver page
@@ -168,11 +164,10 @@ $( "#loginbutton" ).click(function(event) {
 	}
 	
 	        else if(data.includes("manager")){
-        
-        
-           // make a call to the severside to get the data!
+                
+           // make a call to the serverside to get the data!
             $.get( "/getManagerData", function( data ) {
-            // throw the data onto the manager page
+            // output the data to the manager page
                 $( "#managerOutput" ).html( data );
           
             });
@@ -236,12 +231,14 @@ var myCart = [];
 
 </div>
         
-     <button id ="goToCheckout"> Checkout </button>    
+     
+	<button id="goToCheckout"> Checkout </button>
+	
         
 	</div><!-- /content -->
 
 	<div data-role="footer">
-		<h4>Copyright GC 2021</h4>
+		<h4>CopyrightGC2021</h4>
 	</div><!-- /footer -->
 </div><!-- /page -->
 
@@ -265,13 +262,14 @@ var myCart = [];
 	</div><!-- /content -->
 
 	<div data-role="footer">
-		<h4>Copyright GC 2021</h4>
+		<h4>CopyrightGC2021</h4>
 	</div><!-- /footer -->
 </div><!-- /page -->
 
 <script>
 
 $("#insertintodb").click(function() {
+		
 		//get the customer username
 		var orderby = $('#loginUsername').val();
 	
@@ -288,19 +286,16 @@ $("#insertintodb").click(function() {
 
 });
 
-
-
-
 </script>
  
 <script>
-
+//this function triggers each time a page is loaded
 $(document).on("pagecreate",function(event){
 
 $.get("/checkIfTimeLeft",function( data ) {
 	
 		if(data.includes("ok")){
-		}else{
+		} else {
 		
 		//session expired
 		window.location="/";
@@ -310,50 +305,63 @@ $.get("/checkIfTimeLeft",function( data ) {
 });
 
 
- $( "#goToCheckout").click(function(){
- 
-	//update div tag with the shopping cart
-	
-	var cartItems = myCart.toString().split(',');
-	
-	// to prevent any duplication, wipe the 'products' div
-	$('#products').html('');
-	
-	
-	//for each record append them to the 'products' div	
-	for (var i=0; i<cartItems.length; i++){
-	$('#products').append(cartItems[i] + '<br>');
-	}
-	
-	
- 
- 
- 
- 
-	// move to the checkout review
-	window.location="/#checkoutreview";
-	});
-	
-	
+
+$( "#goToCheckout" ).click(function() {
+
+        // update the div tag with the shopping cart
+        
+        var cartItems = myCart.toString().split(',');
+        // for each record, append them to the procuts div.
+        
+        // wipe the products div tag!
+        $('#products').html('');
+        
+        for(var i=0; i< cartItems.length; i++){
+            $('#products').append(cartItems[i] + '<br>');
+        }
+        
+       
+
+        // move to to the checkout review
+        window.location="/#checkoutreview";
+});
+
+
+function deleteProduct(item){
+    
+    // loop over the cart
+    myCart.forEach(function(itemCurrent, index, array) {
+                
+               // look for the item we want to delete.
+               if(itemCurrent.includes(item)){
+                  console.log("Removing previous reference to " + item);
+                  myCart.pop(index);
+               }
+        });
+}
+
 function addToCart(itemName){
     // finding out the name of the ITEM we are adding
     var item = itemName;
 	console.log(item);
     
-    // dynamically find out the qty using jquery selector
+    // dynamically find out the qty
 	var qty = $('#'+item).children("option:selected").val();
 	console.log(qty);
     
     // search the cart and see if we already added
     // the item. If we did, remove the old qty.
-
+    console.log("Searching to see if record already exists");
     myCart.forEach(function(itemCurrent, index, array) {
            
+           console.log("in array" + itemCurrent);
            
-           
-           if(itemCurrent.includes(item)){
-              console.log("Removing previous reference to " + item);
-              myCart.pop(index);
+           if(itemCurrent.includes(itemName)){
+              console.log("Removing previous reference to " + itemName);
+                var indexx = array.indexOf(itemCurrent);
+                if (indexx !== -1) {
+                  array.splice(indexx, 1);
+                }
            }
     });
     
@@ -362,6 +370,11 @@ function addToCart(itemName){
     myCart.push(item + '-' + qty);
     
     alert(myCart);
+
+
+	
+	//put in the session
+	$.post("/putInSession", {cart:myCart} );
 
 }
 </script>
@@ -383,7 +396,7 @@ function addToCart(itemName){
 	</div><!-- /content -->
 
 	<div data-role="footer">
-		<h4>Copyright GC 2021</h4>
+		<h4>CopyrightGC2021</h4>
 	</div><!-- /footer -->
 </div><!-- /page -->
  
@@ -400,7 +413,8 @@ function addToCart(itemName){
          
      <div id ="driverOutput"> 
 
-	</div>	                    
+	</div>	
+	
     <script
   
   src="https://code.jquery.com/jquery-3.6.0.js"

@@ -89,6 +89,7 @@ app.get('/getManagerData', function (req, res) {
    
    req.session.manager = 1
    req.session.email = ''
+   
   // put the data in the database
   // pulling in mysql
   var mysql = require('mysql');
@@ -227,12 +228,7 @@ console.log(timeLeft);
 
 app.post('/completeCheckout', function (req, res) {
   
-  var timeLeft = req.session.cookie.maxAge/ 1000;
-  if(timeLeft<100){
-	  
-  }
-  
-  
+ 
   // catching the variables
   var orderby = req.body.orderby;
   var items = req.body.items;
