@@ -1,13 +1,13 @@
-<link rel="stylesheet" href="css/themes/my-custom-theme.css" />
 <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
 <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
 <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
 
 <!--homepage-->
+
 <div data-role="page" id="homepage" >
 
 	<div data-role="header">
-		<h1>Home</h1>
+		<h1>Dee's Doughnuts</h1>
 	</div><!-- /header -->
 
 	<div role="main" class="ui-content">
@@ -22,7 +22,7 @@
 	</div><!-- /content -->
 
 	<div data-role="footer">
-		<h4>Copyright GC 2021</h4>
+		<h4>CopyrightGC2021</h4>
 	</div><!-- /footer -->
 </div><!-- /page -->
 
@@ -31,13 +31,13 @@
 <div data-role="page" id="register">
 
 	<div data-role="header">
-		<h1>Register</h1>
+		<h1>Create Account</h1>
 		<a href="#homepage" class="ui-btn">Home</a>
 	</div><!-- /header -->
 
 	<div role="main" class="ui-content">
 	
-    <!--text input boxes-->
+	<!--text input boxes-->
     Username <input type="text" id="username"/> <br>
 
     E-mail <input type="text" id="email"/> <br>
@@ -46,10 +46,9 @@
 	
 	Account Type <input type="text" id="acctype"/> <br>
 
-    <button id="submitbutton"> Submit Button </button>
+    <button id="submitbutton"> Submit </button>
     
-    
-    
+        
 	</div><!-- /content -->
 
 	<div data-role="footer">
@@ -60,7 +59,7 @@
 
 
 <script>
-// when the 'submit' button is clicked
+// when the 'submit' button on line 49 is clicked
 $( "#submitbutton" ).click(function(event) {
   // stop the default redirect of the browser
   event.preventDefault();
@@ -85,7 +84,7 @@ $( "#submitbutton" ).click(function(event) {
  // only send the data to the database, if the parameter is true.
   if(isValid == true){
       // send the data to the server side
-      $.post( "/putInDatabase", { username: username, email: email, password:password, acctype:acctype })
+      $.post( "/putInDatabase", { username:username, email:email, password:password, acctype:acctype })
       .done(function( data ) {
         alert( "Data Loaded: " + data );
       });
@@ -98,24 +97,17 @@ $( "#submitbutton" ).click(function(event) {
 </script>
 
 
-
-
-
-
-
 <!--Login Page-->
 <div data-role="page" id="login" >
 
 	<div data-role="header">
 		<h1>Log in to your account</h1>
-		
 		<a href="#homepage" class="ui-btn">Home</a>
 	</div><!-- /header -->
 
 	<div role="main" class="ui-content">
 		<p>Access your account</p>
-        
-        
+                
         Username <input type="text" id="loginUsername"/> <br>
         Password <input type="text" id="loginPassword"/> <br>
 
