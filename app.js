@@ -225,6 +225,69 @@ console.log(timeLeft);
   }
   
 });
+app.get('/getProducts', function (req, res) {
+   
+   
+  // put the data in the database
+  // pulling in mysql
+  var mysql = require('mysql');
+   // set up a connection  
+  var con = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  database: "test",
+  password: ""
+  });
+  
+  
+    con.connect(function(err) {
+  if (err) throw err;
+  con.query("SELECT * from products", function (err, result, fields) {
+    if (err) throw err;
+   
+    
+    var output = '';
+    for(var i=0; i < result.length; i++){
+        
+
+       output = output + `
+       
+       <img src="`+result[i].picturepath+`" style="height:100px;width:100px">
+       
+       <div class="ui-field-contain">
+            <label for="select-native-2">`+result[i].productname+`</label>
+           
+        <select id="`+result[i].productname+`_qty" name="select-native-2" id="select-native-2" data-mini="true">
+                <option value=""></option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+            </select>
+         <br>   
+         Price: `+result[i].cost+`   
+        
+        <br>
+        <button id="addtocart" onclick="addToCart('`+result[i].productname+`_qty', `+result[i].cost+`)"> Add To Cart </button>
+
+        </div>    
+        `;
+
+    }
+    
+
+    
+    res.send(output);
+    
+    
+    
+  });
+});
+
+  
+  
+  
+});
 
 app.post('/completeCheckout', function (req, res) {
   

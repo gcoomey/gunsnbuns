@@ -7,8 +7,8 @@
 
 
 <!--homepage-->
-
-<div data-role="page" id="homepage" data-theme="a">
+<!--homepage-->
+<div data-role="page" id="homepage">
 
 	<div data-role="header">
 		<h1>Dee's Doughnuts</h1>
@@ -26,7 +26,7 @@
 	</div><!-- /content -->
 
 	<div data-role="footer">
-		<h4>CopyrightGC2021</h4>
+		<h4>GC 2021</h4>
 	</div><!-- /footer -->
 </div><!-- /page -->
 
@@ -42,6 +42,7 @@
 	<div role="main" class="ui-content">
 	
 	<!--text input boxes-->
+	
     Username <input type="text" id="username"/> <br>
 
     E-mail <input type="text" id="email"/> <br>
@@ -56,19 +57,19 @@
 	</div><!-- /content -->
 
 	<div data-role="footer">
-		<h4>CopyrightGC2021</h4>
+		<h4>GC2021</h4>
 	</div><!-- /footer -->
 </div><!-- /page -->
 
 
 
 <script>
-// when the 'submit' button on line 49 is clicked
+// when the 'submit' button is clicked
 $( "#submitbutton" ).click(function(event) {
   // stop the default redirect of the browser
   event.preventDefault();
   
-  // grab the values
+  // grab the values input by the user
   var username = $('#username').val();
   var email = $('#email').val();
   var password = $('#password').val();
@@ -105,13 +106,12 @@ $( "#submitbutton" ).click(function(event) {
 <div data-role="page" id="login" >
 
 	<div data-role="header">
-		<h1>Log in to your account</h1>
+		<h1>Log in to your account here</h1>
 		<a href="#homepage" class="ui-btn">Home</a>
 	</div><!-- /header -->
 
 	<div role="main" class="ui-content">
-		<p>Login to your account</p>
-                
+		                
         Username <input type="text" id="loginUsername"/> <br>
         Password <input type="text" id="loginPassword"/> <br>
 
@@ -123,7 +123,7 @@ $( "#submitbutton" ).click(function(event) {
 	</div><!-- /content -->
 
 	<div data-role="footer">
-		<h4>CopyrightGC2021</h4>
+		<h4>GC 2021</h4>
 	</div><!-- /footer -->
 </div><!-- /page -->
 
@@ -133,7 +133,7 @@ $( "#loginbutton" ).click(function(event) {
   // stop the default redirect of the browser
   event.preventDefault();
   
-  // grabbing the values
+  // takes the values input by the user
   var un = $('#loginUsername').val();
   var pw = $('#loginPassword').val();
   
@@ -144,6 +144,8 @@ $( "#loginbutton" ).click(function(event) {
    if(pw == ""){
 	alert ("Please enter a password");
   }
+
+
 	
   $.post( "/checkTheLogin", { username: un, password: pw })
       .done(function( data ) {
@@ -207,34 +209,15 @@ var myCart = [];
 	<div role="main" class="ui-content">
 		<p>Choose from our delicious range of homemade doughnuts, all lovingly prepared in our on site bakery</p>
         
-        
- <div class="ui-field-contain">
-    <label for="select-native-2">Chocolate Doughnut</label>
-   
-<select id="chocolate_doughnut_qty" name="select-native-2" id="select-native-2" data-mini="true">
-        <option value=""></option>
-		<option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-    </select>
-<button id="addtocart" onclick="addToCart('chocolate_doughnut_qty')"> Add To Cart </button>
+           <div id="productdata"> </div>
+       
+         <script>
+        $.get( "/getProducts", function( data ) {
+              
+              $("#productdata").html(data);
+        });
+        </script>    
 
-</div>
- <div class="ui-field-contain">
-    <label for="select-native-2">Ring Doughnut</label>
-   
-<select id="ring_doughnut_qty" name="select-native-2" id="select-native-2" data-mini="true">
-        <option value=""></option>
-		<option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-    </select>
-<button id="addtocart" onclick="addToCart('ring_doughnut_qty')"> Add To Cart </button>
-
-</div>
-        
      
 	<button id="goToCheckout"> Checkout </button>
 	
