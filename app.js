@@ -54,14 +54,15 @@ var output = '';
 
   con.connect(function(err) {
   if (err) throw err;
-  con.query("SELECT orderby, items FROM orders;", function (err, result, fields) {
+  con.query("SELECT id, orderby, items FROM orders;", function (err, result, fields) {
     if (err) throw err;
     console.log(result);
    
     
     // looping over the records
     for(var i=0; i< result.length; i++){
-        output = output + result[i].orderby + '---' + result[i].items + '<br>';
+        output = output + result[i].id + '--' +result[i].orderby + '--' + 
+		result[i].items + '<button onclick="markAsDelivered('+result[i].id+')">Item Delivered</button><br>';
     }
     
      // return the output variable
@@ -113,12 +114,35 @@ var output = '';
     if (err) throw err;
     console.log(result);
    
+   var runningTotal = 0; 
     
     // looping over the records
     for(var i=0; i< result.length; i++){
         output = output + result[i].orderby + '---' + result[i].items + '<br>';
-    }
-    
+    // calculate cost
+             var items = result[i].items;
+	
+			var singleTransaction = items.split(',');
+			// loop over all the items in a single transaction
+            
+            for(var x=0; x<singleTransaction.length; x++){
+                  console.log(singleTransaction[x]);
+                  
+                  var singleProduct = singleTransaction[x].split('-');
+                                     // qty           *        itemCost
+                  var cost = Number(singleProduct[1]) * Number(singleProduct[2]);
+                  console.log(cost);
+                  
+                  // add to running total
+                  runningTotal = Number(runningTotal) + Number(cost);
+	
+	
+			}
+	
+			console.log('------------ Next transaction')
+	}
+    output = output + 'Total order cost: ' + runningTotal;
+	
      // return the output variable
     res.send(output);   
   });
@@ -182,6 +206,7 @@ app.post('/putInDatabase', function (req, res) {
   var username = req.body.username;
   var email = req.body.email;
   var pass = req.body.password;
+  var acctype = req.body.acctype;
   
   // put the data in the database
   // pulling in mysql
@@ -325,6 +350,41 @@ app.post('/completeCheckout', function (req, res) {
   
 })
 
+app.post('/updateOrderStatus', function (req, res) {
+	
+	var id = req.body.id;
+	
+  // put the data in the database
+  // pulling in mysql
+  var mysql = require('mysql');
+
+  
+ // set up a connection  
+  var con = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  database: "test",
+  password: ""
+  });
+  
+  var sql = "UPDATE `test`.`orders` SET `orderstatus` = 'Delivered' WHERE `id` = "+id+";"
+  
+  console.log(sql);
+  
+  con.connect(function(err) {
+  if (err) throw err;
+  con.query(sql, function (err, result, field) {
+	  if (err) throw err;
+  
+  res.send("OK");
+  
+	
+  });
+});
+
+});
+
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
@@ -346,5 +406,43 @@ app.use(function(err, req, res, next) {
 });
 
 module.exports = app;
+
+
+app.post('/updateOrderStatus', function (req, res) {
+	
+	var id = req.body.id;
+	
+  // put the data in the database
+  // pulling in mysql
+  var mysql = require('mysql');
+
+  
+ // set up a connection  
+  var con = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  database: "test",
+  password: ""
+  });
+  
+  var sql = "UPDATE `test`.`orders` SET `orderstatus` = 'Delivered' WHERE `id` = "+id+";"
+  
+  console.log(sql);
+  
+  con.connect(function(err) {
+  if (err) throw err;
+  con.query(sql, function (err, result, field) {
+	  if (err) throw err;
+  
+  res.send("OK");
+  
+	
+  });
+});
+
+});
+
+
+
 
 

@@ -26,7 +26,7 @@
 	</div><!-- /content -->
 
 	<div data-role="footer">
-		<h4>GC 2021</h4>
+		<h4>GC2021</h4>
 	</div><!-- /footer -->
 </div><!-- /page -->
 
@@ -123,7 +123,7 @@ $( "#submitbutton" ).click(function(event) {
 	</div><!-- /content -->
 
 	<div data-role="footer">
-		<h4>GC 2021</h4>
+		<h4>GC2021</h4>
 	</div><!-- /footer -->
 </div><!-- /page -->
 
@@ -225,10 +225,12 @@ var myCart = [];
 	</div><!-- /content -->
 
 	<div data-role="footer">
-		<h4>CopyrightGC2021</h4>
+		<h4>GC2021</h4>
 	</div><!-- /footer -->
 </div><!-- /page -->
 
+
+<!--Allow customer to review order-->
 <div data-role="page" id="checkoutreview" >
 
 	<div data-role="header">
@@ -242,14 +244,14 @@ var myCart = [];
 		<div id="products">
 		</div>
         
-         <button id="insertintodb">Complete Checkout</button>
+         <button id="insertintodb">Go to Cart</button>
          
          
         
 	</div><!-- /content -->
 
 	<div data-role="footer">
-		<h4>CopyrightGC2021</h4>
+		<h4>GC2021</h4>
 	</div><!-- /footer -->
 </div><!-- /page -->
 
@@ -276,7 +278,7 @@ $("#insertintodb").click(function() {
 </script>
  
 <script>
-//this function triggers each time a page is loaded
+//this function triggers each time a page is loaded, for sessions
 $(document).on("pagecreate",function(event){
 
 $.get("/checkIfTimeLeft",function( data ) {
@@ -298,17 +300,25 @@ $( "#goToCheckout" ).click(function() {
         // update the div tag with the shopping cart
         
         var cartItems = myCart.toString().split(',');
-        // for each record, append them to the procuts div.
-        
-        // wipe the products div tag!
+		
+        // wipe the 'products' div tag
         $('#products').html('');
-        
+		
+		var total = 0;
+		
+			
+        // for each record, append them to the 'products' div.
         for(var i=0; i< cartItems.length; i++){
+		
+		var singleRecord = cartItems[i].split('-');
+		//qty ordered by cost of item
+		var itemTotal = singleRecord[1] * singleRecord[2]; 
+		total = total + itemTotal;
+            
             $('#products').append(cartItems[i] + '<br>');
         }
         
-       
-
+       $('#products').append("Total cost of order: "+total);
         // move to to the checkout review
         window.location="/#checkoutreview";
 });
@@ -327,23 +337,22 @@ function deleteProduct(item){
         });
 }
 
-function addToCart(itemName){
-    // finding out the name of the ITEM we are adding
+function addToCart(itemName,cost){
+    // finding out the name of the item (product) we are adding
     var item = itemName;
 	console.log(item);
     
-    // dynamically find out the qty
+    // get the quantity
 	var qty = $('#'+item).children("option:selected").val();
 	console.log(qty);
     
-    // search the cart and see if we already added
-    // the item. If we did, remove the old qty.
+    // search the cart and remove item if added before
+	
     console.log("Searching to see if record already exists");
     myCart.forEach(function(itemCurrent, index, array) {
            
-           console.log("in array" + itemCurrent);
-           
-           if(itemCurrent.includes(itemName)){
+                 
+           if(itemCurrent.includes(item,cost)){
               console.log("Removing previous reference to " + itemName);
                 var indexx = array.indexOf(itemCurrent);
                 if (indexx !== -1) {
@@ -354,7 +363,7 @@ function addToCart(itemName){
     
     
     // add the item to the cart
-    myCart.push(item + '-' + qty);
+    myCart.push(item + '-' + qty + '- €'+ cost);
     
     alert(myCart);
 
@@ -369,7 +378,7 @@ function addToCart(itemName){
 <div data-role="page" id="manager">
 
 	<div data-role="header">
-		<h1>Management Dashboard</h1>
+		<h1>Reports</h1>
 		<a href="#homepage" class="ui-btn">Home</a>
 	</div><!-- /header -->
 
@@ -380,10 +389,16 @@ function addToCart(itemName){
 
 	</div>
 	
+	<script>
+	$.get("/getManagerData", function( data ) {
+	$('#managerOutput').html(data);
+	});
+	</script>
+	
 	</div><!-- /content -->
 
 	<div data-role="footer">
-		<h4>CopyrightGC2021</h4>
+		<h4>GC2021</h4>
 	</div><!-- /footer -->
 </div><!-- /page -->
  
@@ -426,6 +441,22 @@ $.getJSON( "http://api.weatherstack.com/current?access_key=e01f81992b8fa49e7fb20
 	</div><!-- /content -->
 
 	<div data-role="footer">
-		<h4>Copyright GC 2021</h4>
+		<h4>GC2021</h4>
 	</div><!-- /footer -->
 </div><!-- /page -->
+
+
+<script>
+function markAsDelivered(id){
+
+
+	$.post ( "/updateOrderStatus", {id:id})
+	.done(function(data) {
+	alert("Data Loaded:"+ data );
+	});
+	
+
+}
+
+
+</script>
