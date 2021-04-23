@@ -8,6 +8,7 @@ var session = require('express-session');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var testRouter =  require('./routes/test');
 
 var app = express();
 
@@ -31,6 +32,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/test', testRouter);
+
 
 app.get('/getDriverData', function (req, res) {
    
@@ -62,7 +65,7 @@ var output = '';
     // looping over the records
     for(var i=0; i< result.length; i++){
         output = output + result[i].id + '--' +result[i].orderby + '--' + 
-		result[i].items + '<button onclick="markAsDelivered('+result[i].id+')">Item Delivered</button><br>';
+		result[i].items + '<button onclick="markAsDelivered('+result[i].id+')">Item Delivered</button>   <button onclick="deleteOrder('+result[i].id+')"> Delete </button>        <br>';
     }
     
      // return the output variable
@@ -139,7 +142,7 @@ var output = '';
 	
 			}
 	
-			console.log('------------ Next transaction')
+			console.log('----- Next transaction')
 	}
     output = output + 'Total order cost: ' + runningTotal;
 	
@@ -152,6 +155,76 @@ var output = '';
   
   
 });
+
+app.post('/getRangeData', function (req, res) {
+   
+   // the last week or the last month
+   var range = req.body.range;
+   
+    
+   // put the data in the database
+  // pulling in mysql
+  var mysql = require('mysql');
+   // set up a connection  
+  var con = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  database: "test",
+  password: ""
+  });
+  
+ //hold the order data to send back to the manager
+var output = '';
+
+var sql = "SELECT orderby, items FROM orders WHERE  DATEDIFF(NOW(), `datestamp`) < "+ range;
+
+console.log("range is "+range);
+console.log(sql);
+  
+   con.connect(function(err) {
+  if (err) throw err;
+  con.query(sql, function (err, result, fields) {
+    if (err) throw err;
+    console.log(result);
+	
+	var runningTotal = 0;
+	 // looping over the records
+    for(var i=0; i< result.length; i++){
+        output = output + result[i].orderby + '---' + result[i].items + '<br>';
+    // calculate cost
+             var items = result[i].items;
+	
+			var singleTransaction = items.split(',');
+			// loop over all the items in a single transaction
+            
+            for(var x=0; x<singleTransaction.length; x++){
+                  console.log(singleTransaction[x]);
+                  
+                  var singleProduct = singleTransaction[x].split('-');
+                                     // qty           *        itemCost
+                  var cost = Number(singleProduct[1]) * Number(singleProduct[2]);
+                  console.log(cost);
+                  
+                  // add to running total
+                  runningTotal = Number(runningTotal) + Number(cost);
+	
+	
+			}
+	
+			console.log('----- Next transaction')
+	}
+    output = output + 'Total order cost: ' + runningTotal;
+	
+     // return the output variable
+    res.send(output);   
+  });
+});
+
+
+  
+  
+});
+	
 
 
 app.post('/checkTheLogin', function (req, res) {
@@ -186,7 +259,7 @@ app.post('/checkTheLogin', function (req, res) {
   con.query("SELECT * FROM users WHERE username = '"+username+"' AND PASSWORD = '"+pass+"' LIMIT 1;", function (err, result, fields) {
     if (err) throw err;
     console.log(result);
-	//return the acccount type back
+	//return the acctype back
     res.send(result[0].acctype);
     
   });
@@ -294,7 +367,7 @@ app.get('/getProducts', function (req, res) {
         
         <br>
         <button id="addtocart" onclick="addToCart('`+result[i].productname+`_qty', `+result[i].cost+`)"> Add To Cart </button>
-
+		<button onclick="deleteOrder('+result[i].id+')">Delete from Order</button> 
         </div>    
         `;
 
@@ -385,27 +458,7 @@ app.post('/updateOrderStatus', function (req, res) {
 });
 
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
-});
 
-
-
-
-
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
-
-module.exports = app;
 
 
 app.post('/updateOrderStatus', function (req, res) {
@@ -442,7 +495,61 @@ app.post('/updateOrderStatus', function (req, res) {
 
 });
 
+app.post('/deleteOrder', function (req, res) {
+	
+	var id = req.body.id;
+	
+  // put the data in the database
+  // pulling in mysql
+  var mysql = require('mysql');
+   // set up a connection  
+  var con = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  database: "test",
+  password: ""
+  });
+  
+  var sql = "DELETE FROM `test`.`orders` WHERE  `id`="+id+";"
+  
+  console.log(sql);
+  
+  con.connect(function(err) {
+  if (err) throw err;
+  con.query(sql, function (err, result, fields) {
+    if (err) throw err;
+  
+    res.send("ok");
+    
+    
+    
+    
+    
+  });
+});
+
+   
+   
+  
+});
 
 
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+  next(createError(404));
+});
 
+
+// error handler
+app.use(function(err, req, res, next) {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+  // render the error page
+  res.status(err.status || 500);
+  res.render('error');
+});
+
+module.exports = app;
 

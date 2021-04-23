@@ -1,3 +1,15 @@
 <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.14.1.css"/>
 <script src ="https://code.jquert.com/qunit/qunit-2.14.1.js"></script>
-const
+<script>
+const add = (a,b) => a + b;
+ 
+function add(a, b) {
+  return a + b;
+}
+
+QUnit.module('add', hooks => {
+  QUnit.test('should add two numbers', assert => {
+    assert.equal(add(1, 1), 2);
+  });
+});
+</script>

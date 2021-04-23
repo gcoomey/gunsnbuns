@@ -1,4 +1,5 @@
 
+
 <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
 <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
 <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
@@ -8,16 +9,15 @@
   <link rel="stylesheet" href="stylesheets/jquery.mobile.icons.min.css" />
 
 
-
 <script src="javascripts/index.js"></script>
 
 
-<!--homepage-->
 <!--homepage-->
 <div data-role="page" id="homepage">
 
 	<div data-role="header">
 		<h1>Dee's Doughnuts</h1>
+		<a href="#login" class="ui-btn">Login</a>
 	</div><!-- /header -->
 
 	<div role="main" class="ui-content">
@@ -43,6 +43,7 @@
 	<div data-role="header">
 		<h1>Create Account</h1>
 		<a href="#homepage" class="ui-btn">Home</a>
+		<a href="#login" class="ui-btn">Login</a>
 	</div><!-- /header -->
 
 	<div role="main" class="ui-content">
@@ -112,9 +113,9 @@ $( "#submitbutton" ).click(function(event) {
 <div data-role="page" id="login" >
 
 	<div data-role="header">
-		<h1>Log in to your account here</h1>
+		<h1>Log in to your account</h1>
 		<a href="#homepage" class="ui-btn">Home</a>
-	</div><!-- /header -->
+		</div><!-- /header -->
 
 	<div role="main" class="ui-content">
 		                
@@ -158,6 +159,8 @@ $( "#loginbutton" ).click(function(event) {
 	  //say what account type is
         alert( "Data Loaded: " + data );
 		
+		
+		
 		if(data.includes("customer")){
 		
 	// move to the customer dashboard
@@ -181,10 +184,11 @@ $( "#loginbutton" ).click(function(event) {
             $.get( "/getManagerData", function( data ) {
             // output the data to the manager page
                 $( "#managerOutput" ).html( data );
-          
+				
+				          
             });
-                
-        
+             
+			        
            // move to the manager dashboard
            window.location="/#manager";
         }
@@ -330,19 +334,6 @@ $( "#goToCheckout" ).click(function() {
 });
 
 
-function deleteProduct(item){
-    
-    // loop over the cart
-    myCart.forEach(function(itemCurrent, index, array) {
-                
-               // look for the item we want to delete.
-               if(itemCurrent.includes(item)){
-                  console.log("Removing previous reference to " + item);
-                  myCart.pop(index);
-               }
-        });
-}
-
 function addToCart(itemName,cost){
     // finding out the name of the item (product) we are adding
     var item = itemName;
@@ -401,6 +392,31 @@ function addToCart(itemName,cost){
 	});
 	</script>
 	
+			<select id="getOrderByRange">
+			<option value = "7"> 7 days </option>
+			<option value = "30"> 30 days </option>
+			</select>
+			<button onclick="getRangeData()"> Get Range Data </button>
+			
+			<div id="rangeData">
+			</div>
+			
+			<script>
+			function getRangeData(){
+			
+			var range = $('#getOrderByRange').children("option:selected").val();
+			
+			$.post( "/getRangeData", { range: range} )
+              .done(function( data ) {
+                $('#rangeData').html(data);
+              });
+			
+			}
+			
+			
+			
+			</script>
+			
 	</div><!-- /content -->
 
 	<div data-role="footer">
@@ -415,21 +431,32 @@ function addToCart(itemName,cost){
 		<h1>Driver Dashboard</h1>
 		<a href="#homepage" class="ui-btn">Home</a>
 	</div><!-- /header -->
+    <script
+  
+  src="https://code.jquery.com/jquery-3.6.0.js"
+  integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+  crossorigin="anonymous">
+  </script>
+<span>Your current location is the city of <span><div id="location"></div></span> The current temperature is <span><div id="currentTemp"></div></span>
+ <script>
+
+
+$.getJSON( "http://api.weatherstack.com/current?access_key=e01f81992b8fa49e7fb20914c3b2d8db&query=Cork", function( json ) {
+  console.log("JSON Data: " +json.current.temperature +json.location.name); 
+  
+  $('#currentTemp').html(json.current.temperature);
+  $('#location').html (json.location.name);
+  
+ });
+</script>
 
 	<div role="main" class="ui-content">
-		<p>Orders for Delivery</p>
+		<h2><p>Orders for Delivery</p></h2>
          
      <div id ="driverOutput"> 
 
 	</div>	
 	
-    <script
-  
-  src="https://code.jquery.com/jquery-3.6.0.js"
-  integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
-  crossorigin="anonymous"> </script>
-Your current location is the city of <div id="location"></div>
-The current temperature is <div id="currentTemp"></div>
  
  <script>
 
@@ -451,18 +478,34 @@ $.getJSON( "http://api.weatherstack.com/current?access_key=e01f81992b8fa49e7fb20
 	</div><!-- /footer -->
 </div><!-- /page -->
 
-
 <script>
 function markAsDelivered(id){
 
-
-	$.post ( "/updateOrderStatus", {id:id})
-	.done(function(data) {
-	alert("Data Loaded:"+ data );
-	});
-	
-
+    
+    
+    $.post( "/updateOrderStatus", { id: id })
+  .done(function( data ) {
+    alert( "Data Loaded: " + data );
+  });
+    
 }
 
 
+function deleteOrder(id){
+
+    
+    
+    $.post( "/deleteOrder", { id: id })
+  .done(function( data ) {
+    alert( "Data Loaded: " + data );
+	
+   location.reload();
+    
+  });
+    
+}
+
 </script>
+
+
+
