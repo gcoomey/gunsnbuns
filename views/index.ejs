@@ -3,12 +3,9 @@
 <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
 <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
 <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
-
-
 <link rel="stylesheet" href="stylesheets/gtheme.css" />
-  <link rel="stylesheet" href="stylesheets/jquery.mobile.icons.min.css" />
-
-
+<link rel="stylesheet" href="stylesheets/jquery.mobile.icons.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/canvasjs/1.7.0/canvasjs.min.js"></script>
 <script src="javascripts/index.js"></script>
 
 
@@ -16,26 +13,29 @@
 <div data-role="page" id="homepage">
 
 	<div data-role="header">
-		<h1>Dee's Doughnuts</h1>
-		<a href="#login" class="ui-btn">Login</a>
+		<h1 class = "legend" align="center" ><em>GUNS'N'BUNS</em></h1>
+		
 	</div><!-- /header -->
 
 	<div role="main" class="ui-content">
-		<p>Welcome to Dee's Doughnuts</p>
-        
-        
-        <a href="#register" class="ui-btn">Register</a>
-        <a href="#login" class="ui-btn">Login</a>
-        
-        
+		
+		<p align="center" div=><strong>WELCOME! </strong><br></br>
+		Let's get started
+			
+		</p>
+		        
+		Username <input type="text" id="loginUsername" placeholder = "Please enter your email"/> <br>
+        Password <input type="text" id="loginPassword" placeholder = "Please enter your password"/> <br>
+		    
+         <button id="loginbutton" class="ui-btn"> Sign In</button>
+		 <div data-role="ui-controlgroup-label">
+		 <p><strong>or, if you haven't already</strong></p>
+		 </div>  
+		 <a href="#register" class="ui-btn">Sign Up!</a>
+                
       
 	</div><!-- /content -->
-
-	<div data-role="footer">
-		<h4>GC2021</h4>
-	</div><!-- /footer -->
 </div><!-- /page -->
-
 
 <!--registration page-->
 <div data-role="page" id="register">
@@ -52,7 +52,7 @@
 	
     Username <input type="text" id="username"/> <br>
 
-    E-mail <input type="text" id="email"/> <br>
+    E-mail <input type="email" id="email"/> <br>
     
     Password <input type="text" id="password"/> <br>
 	
@@ -62,13 +62,7 @@
     
         
 	</div><!-- /content -->
-
-	<div data-role="footer">
-		<h4>GC2021</h4>
-	</div><!-- /footer -->
 </div><!-- /page -->
-
-
 
 <script>
 // when the 'submit' button is clicked
@@ -125,14 +119,8 @@ $( "#submitbutton" ).click(function(event) {
         
          <button id="loginbutton"> Login </button>
          
-         
-        
-	</div><!-- /content -->
-
-	<div data-role="footer">
-		<h4>GC2021</h4>
-	</div><!-- /footer -->
-</div><!-- /page -->
+ </div><!-- /content -->       
+ </div><!-- /page -->       
 
 <script>
 // when the 'Login' button is clicked
@@ -233,12 +221,7 @@ var myCart = [];
 	
         
 	</div><!-- /content -->
-
-	<div data-role="footer">
-		<h4>GC2021</h4>
-	</div><!-- /footer -->
-</div><!-- /page -->
-
+ </div><!-- /page --> 
 
 <!--Allow customer to review order-->
 <div data-role="page" id="checkoutreview" >
@@ -259,12 +242,8 @@ var myCart = [];
          
         
 	</div><!-- /content -->
-
-	<div data-role="footer">
-		<h4>GC2021</h4>
-	</div><!-- /footer -->
-</div><!-- /page -->
-
+ </div><!-- /page --> 
+ 
 <script>
 
 $("#insertintodb").click(function() {
@@ -418,11 +397,7 @@ function addToCart(itemName,cost){
 			</script>
 			
 	</div><!-- /content -->
-
-	<div data-role="footer">
-		<h4>GC2021</h4>
-	</div><!-- /footer -->
-</div><!-- /page -->
+ </div><!-- /page --> 
  
 <!--Driver Page-->
 <div data-role="page" id="driver">
@@ -456,7 +431,8 @@ $.getJSON( "http://api.weatherstack.com/current?access_key=e01f81992b8fa49e7fb20
      <div id ="driverOutput"> 
 
 	</div>	
-	
+</div><!-- /content -->
+</div><!-- /page --> 
  
  <script>
 
@@ -471,12 +447,6 @@ $.getJSON( "http://api.weatherstack.com/current?access_key=e01f81992b8fa49e7fb20
 </script>
        
         
-	</div><!-- /content -->
-
-	<div data-role="footer">
-		<h4>GC2021</h4>
-	</div><!-- /footer -->
-</div><!-- /page -->
 
 <script>
 function markAsDelivered(id){
@@ -507,5 +477,7 @@ function deleteOrder(id){
 
 </script>
 
-
+</div><!-- /content -->
+</div><!-- /page --> 
+ 
 
