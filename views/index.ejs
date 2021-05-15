@@ -5,6 +5,7 @@
 <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
 <link rel="stylesheet" href="stylesheets/gtheme.css" />
 <link rel="stylesheet" href="stylesheets/jquery.mobile.icons.min.css" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/canvasjs/1.7.0/canvasjs.min.js"></script>
 <script src="javascripts/index.js"></script>
 
@@ -14,8 +15,40 @@
 
 	<div data-role="header">
 		<h1 class = "legend" align="center" ><em>GUNS'N'BUNS</em></h1>
-		
 	</div><!-- /header -->
+	<a name ="top"></a>
+ <!--fetch the data from the weather api-->
+<script
+  src="https://code.jquery.com/jquery-3.5.1.js"
+  integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+  crossorigin="anonymous"></script>
+  
+	<div class = "ui-body">
+  	Location: <div id="location"></div> 
+	Temperature: <div id="currentTemp"></div>
+	</div>
+	
+  <script>
+
+// find out where the person is
+
+$.getJSON( "http://ip-api.com/json/?fields=61439", function( json ) {
+ 
+
+ console.log( "JSON Data: " +json.city );
+  
+           // make a call to the weather API
+           $.getJSON( "http://api.weatherstack.com/current?access_key=c8d539918eb93fc620122e3faee3b2a0&query="+json.city, function( json ) {
+          console.log( "JSON Data: " +json.current.temperature +json.location.name );
+          
+          // put the termperature into the div
+          $('#currentTemp').html(json.current.temperature);
+		  $('#location').html (json.location.name);
+		  
+          
+           }); 
+ });
+</script>
 
 	<div role="main" class="ui-content">
 		
@@ -27,14 +60,30 @@
 		Username <input type="text" id="loginUsername" placeholder = "Please enter your email"/> <br>
         Password <input type="text" id="loginPassword" placeholder = "Please enter your password"/> <br>
 		    
-         <button id="loginbutton" class="ui-btn"> Sign In</button>
-		 <div data-role="ui-controlgroup-label">
+         <button id="loginbutton" class="ui-btn">Sign In</button>
+		 
 		 <p><strong>or, if you haven't already</strong></p>
-		 </div>  
-		 <a href="#register" class="ui-btn">Sign Up!</a>
-                
-      
-	</div><!-- /content -->
+		  
+		 <a href ="#register" class="ui-btn">Register</a>
+
+
+	<div class = "ui-btn-top">
+		<a href="#top" class="ui-btn ui-icon-arrow-u ui-btn-icon-left ui-shadow ui-corner-all" >Top of page</a>  
+	</div>
+	
+	</div ><!-- /content -->
+	
+	<div data-role ="footer" >
+	
+	<div data-role = "navbar">
+		<ul>
+			<li><a href ="#homepage" data-icon ="home">Home</a></li>
+			<li><a href ="#register" data-icon="star">Register</a></li>
+			<li><a href ="#about" data-icon="heart">About</a></li>
+		</ul>
+		</ul>
+	</div><!-- /navbar -->
+	</div><!-- /footer -->
 </div><!-- /page -->
 
 <!--registration page-->
@@ -42,13 +91,21 @@
 
 	<div data-role="header">
 		<h1>Create Account</h1>
-		<a href="#homepage" class="ui-btn">Home</a>
-		<a href="#login" class="ui-btn">Login</a>
+		<a href="#homepage">Home</a>
+		
 	</div><!-- /header -->
+	<a href name = "#top"> </a>
 
 	<div role="main" class="ui-content">
-	
+	<p align="center" div=><strong>START HERE</strong><br></br>
+		 Tell us about yourself!
+			
+		</p>
 	<!--text input boxes-->
+	
+	First Name <input type="text" id="firstname"/> <br>
+	
+	Last Name <input type="text" id="lastname"/> <br>
 	
     Username <input type="text" id="username"/> <br>
 
@@ -56,13 +113,34 @@
     
     Password <input type="text" id="password"/> <br>
 	
-	Account Type <input type="text" id="acctype"/> <br>
+	Age <input type="text" id="age"/> <br>
+	
+	Height in cm <input type="text" id="height"/> <br>
+	
+	Weight in lbs <input type="text" id="weight"/> <br>
+	
+	User Type <input type="text" id="acctype"/> <br>
 
-    <button id="submitbutton"> Submit </button>
-    
-        
-	</div><!-- /content -->
-</div><!-- /page -->
+    <button id="submitbutton" class="ui-btn"> Submit </button>
+	
+ 
+	<div class = "ui-btn-top">
+		<a href="#top" class="ui-btn ui-icon-arrow-u ui-btn-icon-left ui-shadow ui-corner-all" >Top of page</a>  
+	</div>
+	
+	</div ><!-- /content -->
+	
+	<div data-role ="footer" >
+	
+	<div data-role = "navbar">
+		<ul>
+			<li><a href ="#homepage" data-icon ="home">Home</a></li>
+			<li><a href ="#register" data-icon="star">Register</a></li>
+			<li><a href ="#about" data-icon="heart">About</a></li>
+		</ul>
+	</div><!-- /navbar -->
+	</div><!-- /footer -->
+	</div><!-- /page -->
 
 <script>
 // when the 'submit' button is clicked
@@ -71,10 +149,16 @@ $( "#submitbutton" ).click(function(event) {
   event.preventDefault();
   
   // grab the values input by the user
+  var firstname = $('#firstname').val();
+  var lastname = $('#lastname').val();
   var username = $('#username').val();
   var email = $('#email').val();
   var password = $('#password').val();
+  var height = $('#height').val();
+  var age = $('#age').val();
+  var weight = $('#weight').val();
   var acctype = $('#acctype').val();
+ 
   
   var isValid = true;
   
@@ -90,9 +174,9 @@ $( "#submitbutton" ).click(function(event) {
  // only send the data to the database, if the parameter is true.
   if(isValid == true){
       // send the data to the server side
-      $.post( "/putInDatabase", { username:username, email:email, password:password, acctype:acctype })
+      $.post( "/putInDatabase", { firstname:firstname, lastname:lastname, username:username, email:email, password:password, height:height, age:age, weight:weight, accctype:acctype})
       .done(function( data ) {
-        alert( "Data Loaded: " + data );
+        alert( "Data Loaded: " + data + ". Please go to the home page to sign in." );
       });
   }
   
@@ -101,7 +185,6 @@ $( "#submitbutton" ).click(function(event) {
 });
 
 </script>
-
 
 <!--Login Page-->
 <div data-role="page" id="login" >
@@ -119,11 +202,28 @@ $( "#submitbutton" ).click(function(event) {
         
          <button id="loginbutton"> Login </button>
          
- </div><!-- /content -->       
- </div><!-- /page -->       
+  
+	<div class = "ui-btn-top">
+		<a href="#" class="ui-btn ui-icon-arrow-u ui-btn-icon-left ui-shadow ui-corner-all" >Top of page</a>  
+	</div>
+	
+	</div ><!-- /content -->
+	
+	<div data-role ="footer" >
+	
+	<div data-role = "navbar">
+		<ul>
+			<li><a href ="#homepage" data-icon ="home">Home</a></li>
+			<li><a href ="#register" data-icon="star">Register</a></li>
+			<li><a href ="#about" data-icon="heart">About</a></li>
+		</ul>
+		</ul>
+	</div><!-- /navbar -->
+	</div><!-- /footer -->
+	</div><!-- /page -->       
 
 <script>
-// when the 'Login' button is clicked
+// when the 'Sign In' button is clicked
 $( "#loginbutton" ).click(function(event) {
   // stop the default redirect of the browser
   event.preventDefault();
@@ -136,7 +236,8 @@ $( "#loginbutton" ).click(function(event) {
   {
 	alert ("Please enter a username");
   }
-   if(pw == ""){
+   if(pw == "")
+  {
 	alert ("Please enter a password");
   }
 
@@ -147,116 +248,407 @@ $( "#loginbutton" ).click(function(event) {
 	  //say what account type is
         alert( "Data Loaded: " + data );
 		
-		
+	  	
 		
 		if(data.includes("customer")){
 		
-	// move to the customer dashboard
-	   window.location = "/#customerdash";
+	// move to the user dashboard
+	   window.location = "/#userdash";
+	   
 		}
-	else if(data.includes("driver")){
 		
-		 // make a call to the server side to get the data
-            $.get( "/getDriverData", function( data ) {
-            // display the data on the driver page
-                $( "#driverOutput" ).html( data );
-	});
-		
-	// move to the driver dashboard
-	   window.location = "/#driver";
-	}
-	
-	        else if(data.includes("manager")){
-                
+		else if(data.includes("admin")){
+        
+        
            // make a call to the serverside to get the data!
-            $.get( "/getManagerData", function( data ) {
-            // output the data to the manager page
-                $( "#managerOutput" ).html( data );
-				
-				          
+            $.get( "/getAdminData", function( data ) {
+            // show users on the admin page
+                $( "#adminData").html( data );
+          
             });
-             
-			        
-           // move to the manager dashboard
-           window.location="/#manager";
-        }
+         // move to the admin dashboard
+           window.location="/#admin";
+		   }
+});
+
+});
+      
         
-        
-      });
+     
   
-  
- }); 
+ 
   
 </script>
 
 <script>
-var myCart = [];
+var myLog = [];
 
 </script>
 
-<!--Customer Dashboard with add to cart-->
-<div data-role="page" id="customerdash">
+<!--User Dashboard with information-->
+<div data-role="page" id="userdash">
 	
 	
 	
 	<div data-role="header">
-		<h1>Choose your delicious doughnuts</h1>
+		<h1>Log your hard work</h1>
 		<a href="#homepage" class="ui-btn">Home</a>
 	</div><!-- /header -->
 
-	<div role="main" class="ui-content">
-		<p>Choose from our delicious range of homemade doughnuts, all lovingly prepared in our on site bakery</p>
-        
-           <div id="productdata"> </div>
+		<div role="main" class="ui-content">
+		<p>Welcome back! How did you build up that sweat today?</p>
+		 
+ 
+           <div id="movementdata"></div>
        
          <script>
-        $.get( "/getProducts", function( data ) {
+        $.get( "/getMovements", function( data ) {
               
-              $("#productdata").html(data);
+              $("#movementdata").html(data);
         });
-        </script>    
+		
+		function logWorkout(workout){
 
+		  
+            
+         window.location.href = '/#'+workout;
+         alert(workout);
+         };
+        </script>  
+		
+        </script>  
+				
+		
      
-	<button id="goToCheckout"> Checkout </button>
 	
-        
-	</div><!-- /content -->
- </div><!-- /page --> 
-
-<!--Allow customer to review order-->
-<div data-role="page" id="checkoutreview" >
-
+ 
+	<div class = "ui-btn-top">
+		<a href="#" class="ui-btn ui-icon-arrow-u ui-btn-icon-left ui-shadow ui-corner-all" >Top of page</a>  
+	</div>
+	
+	</div ><!-- /content -->
+	
+	<div data-role ="footer" >
+	
+	<div data-role = "navbar">
+		<ul>
+			<li><a href ="#homepage" data-icon ="home">Home</a></li>
+			<li><a href ="#register" data-icon="star">Register</a></li>
+			<li><a href ="#about" data-icon="heart">About</a></li>
+		</ul>
+		</ul>
+	</div><!-- /navbar -->
+	</div><!-- /footer -->
+	</div><!-- /page -->
+	
+	
+<!--Admin page with user information-->	
+	<div data-role="page" id="admin">
+ 
 	<div data-role="header">
-		<h1>Review your order</h1>
-		<a href="#homepage" class="ui-btn">Home</a>
+		<h1>Admin Page</h1>
 	</div><!-- /header -->
 
 	<div role="main" class="ui-content">
-		<p>Check your order before continuing to the payment page</p>
-        
-		<div id="products">
-		</div>
-        
-         <button id="insertintodb">Go to Cart</button>
+		<p>Users</p>
+		<style>
+		table, th, td {
+		border: 1px solid black;
+		}
+		</style>
+		 	
+        <table data-role = "table-stroke" class ="table-stroke" style ="width:100%;" >
+				<colgroup>
+				<col span="1" style="width: 10%;"></col>
+				<col span="1" style="width: 10%;"></col>
+				<col span="1" style="width: 10%;"></col>
+				<col span="1" style="width: 10%;"></col>
+				<col span="1" style="width: 10%;"></col>
+				<col span="1" style="width: 10%;"></col>
+				<col span="1" style="width: 10%;"></col>
+				<col span="1" style="width: 10%;"></col>
+				<col span="1" style="width: 10%;"></col>
+				<col span="1" style="width: 10%;"></col>
+			</colgroup>
+			<tr>
+				<th>ID</th>
+				<th>First Name</th>
+				<th>Last Name</th>
+				<th>User Name</th>
+				<th>Email Address</th>
+				<th>Height</th>
+				<th>Weight</th>
+				<th>Age</th>
+				<th>Account Type</th>
+			</tr>
+			</table>
+			
+			
+        <div id="adminOutput">
+         </div>
+		 
+		  <script>
+         $.get( "/getAdminData", function( data ) {
+             $('#adminOutput').html(data);
+            });
+         </script>
+       
          
-         
-        
-	</div><!-- /content -->
- </div><!-- /page --> 
+	<div class = "ui-btn-top">
+		<a href="#" class="ui-btn ui-icon-arrow-u ui-btn-icon-left ui-shadow ui-corner-all" >Top of page</a>  
+	</div>
+	
+	</div ><!-- /content -->
+	
+	<div data-role ="footer" >
+	
+	<div data-role = "navbar">
+		<ul>
+			<li><a href ="#homepage" data-icon ="home">Home</a></li>
+			<li><a href ="#register" data-icon="star">Register</a></li>
+			<li><a href ="#about" data-icon="heart">About</a></li>
+		</ul>
+		</ul>
+	</div><!-- /navbar -->
+	</div><!-- /footer -->
+	</div><!-- /page -->
+
+<!--Log Strength workout-->
+
+<div data-role="page" id="strength">
+		
+	<div data-role="header">
+		<h1>Ready to log that Hard Work</h1>
+		<a href="#homepage" class="ui-btn">Home</a>
+	</div><!-- /header -->
+
+		<div role="main" class="ui-content">
+		<p>Log your strength workout here!</p>
+		
+		<div id="strengthdata"></div>
+		
+		 <script>
+        $.get( "/getStrength", function( data ) {
+              
+              $("#strengthdata").html(data);
+        });
+        </script>    
  
+        
+		<button id="workoutReview">Summary</button>
+     
+ 
+	<div class = "ui-btn-top">
+		<a href="#" class="ui-btn ui-icon-arrow-u ui-btn-icon-left ui-shadow ui-corner-all" >Top of page</a>  
+	</div>
+	
+	</div ><!-- /content -->
+	
+	<div data-role ="footer" >
+	
+	<div data-role = "navbar">
+		<ul>
+			<li><a href ="#homepage" data-icon ="home">Home</a></li>
+			<li><a href ="#register" data-icon="star">Register</a></li>
+			<li><a href ="#about" data-icon="heart">About</a></li>
+		</ul>
+		</ul>
+	</div><!-- /navbar -->
+	</div><!-- /footer -->
+	</div><!-- /page -->
+
+<!--Log Cardio workout-->
+<div data-role="page" id="cardio">
+	
+	
+	
+	<div data-role="header">
+		<h1>Ready to log that Hard Work</h1>
+		<a href="#homepage" class="ui-btn">Home</a>
+	</div><!-- /header -->
+
+		<div role="main" class="ui-content">
+		<p>Log your Cardio workout here!</p>
+		
+		<div id="cardiodata"></div>
+		
+		<script>
+        $.get( "/getCardio", function( data ) {
+              
+              $("#cardiodata").html(data);
+        });
+        </script>  
+		   <button id="workoutReview">Summary</button>      
+		
+  
+	<div class = "ui-btn-top">
+		<a href="#" class="ui-btn ui-icon-arrow-u ui-btn-icon-left ui-shadow ui-corner-all" >Top of page</a>  
+	</div>
+	
+	</div ><!-- /content -->
+	
+	<div data-role ="footer" >
+	
+	<div data-role = "navbar">
+		<ul>
+			<li><a href ="#homepage" data-icon ="home">Home</a></li>
+			<li><a href ="#register" data-icon="star">Register</a></li>
+			<li><a href ="#about" data-icon="heart">About</a></li>
+		</ul>
+		</ul>
+	</div><!-- /navbar -->
+	</div><!-- /footer -->
+	</div><!-- /page -->
+ 
+ <!--Log Conditioning workout-->
+<div data-role="page" id="conditioning">
+	
+	
+	
+	<div data-role="header">
+		<h1>Ready to log that Hard Work</h1>
+		<a href="#homepage" >home</a>
+	</div><!-- /header -->
+
+		<div role="main" class="ui-content">
+		<p>Log your Conditioning workout here!</p>
+		 
+		 <div id="conditioningdata"></div>
+		
+		 <script>
+        $.get( "/getConditioning", function( data ) {
+              
+              $("#conditioningdata").html(data);
+        });
+        </script>    
+        
+		 <button id="workoutReview">Summary</button>
+       
+	<div class = "ui-btn-top">
+		<a href="#" class="ui-btn ui-icon-arrow-u ui-btn-icon-left ui-shadow ui-corner-all" >Top of page</a>  
+	</div>
+	
+	</div ><!-- /content -->
+	
+	<div data-role ="footer" >
+	
+	<div data-role = "navbar">
+		<ul>
+			<li><a href ="#homepage" data-icon ="home">Home</a></li>
+			<li><a href ="#register" data-icon="star">Register</a></li>
+			<li><a href ="#about" data-icon="heart">About</a></li>
+		</ul>
+		</ul>
+	</div><!-- /navbar -->
+	</div><!-- /footer -->
+	</div><!-- /page -->
+ 
+ <script>
+ $( "#workoutReview" ).click(function(event) {
+ 
+   //update the log with the workout
+	var logItems = myLog.toString().split(' ');
+	
+		
+		// wipe the 'products' div tag
+        $('#products').html('');
+		
+		var total = 0;
+		// for each record, append them to the 'products' div.
+        for(var i=0; i< logItems.length; i++){
+	
+		var singleRecord = logItems[i].split('-');
+		//qty ordered by cost of item
+		var itemTotal = singleRecord[1] * singleRecord[2]; 
+		total = total + itemTotal;
+		
+		    $('#products').append(logItems[i] + '<br>');
+        }
+		
+		$('#products').append("Total number of reps: "+total);
+		
+		window.location = "/#todaysworkout";
+		});
+	
+ 
+ 
+ 
+</script>
+ <div data-role="page" id="todaysworkout">
+
+	<div data-role="header">
+		<h1>Here's everything you achieved today</h1>
+	</div><!-- /header -->
+
+	<div role="main" class="ui-content">
+		 
+           <div id="products">
+          </div> 
+                  
+         <button id="insertintodb">Save forever</button>
+        
+	<div class = "ui-btn-top">
+		<a href="#" class="ui-btn ui-icon-arrow-u ui-btn-icon-left ui-shadow ui-corner-all" >Top of page</a>  
+	</div>
+	
+	</div ><!-- /content -->
+	
+	<div data-role ="footer" >
+	
+	<div data-role = "navbar">
+		<ul>
+			<li><a href ="#homepage" data-icon ="home">Home</a></li>
+			<li><a href ="#register" data-icon="star">Register</a></li>
+			<li><a href ="#about" data-icon="heart">About</a></li>
+		</ul>
+		</ul>
+	</div><!-- /navbar -->
+	</div><!-- /footer -->
+	</div><!-- /page -->
+	
+
+<script>
+
+function addToLog(mySets, myReps, myIntervals){
+    // finding out the name of the ITEM we are adding
+    var sets = mySets;
+	var reps = myReps;
+	var intervals = myIntervals;
+	console.log(sets,reps,intervals);
+    
+	// dynamically find out the reps
+	var exsets = $('#'+sets).val();
+	var exreps = $('#'+reps).val();
+	var exintervals = $('#'+intervals).val();
+	console.log(exsets, exreps, exintervals);
+	
+	  
+    // add the item to the cart
+    myLog.push(exsets + ' ' + sets + ' of');
+	myLog.push(exreps + ' ' + reps + ' at');
+	myLog.push(exintervals + ' ' + intervals);
+	
+        alert(myLog);
+
+}
+	
+    
+ 
+</script>
+
 <script>
 
 $("#insertintodb").click(function() {
 		
 		//get the customer username
-		var orderby = $('#loginUsername').val();
+		var gymnut = $('#loginUsername').val();
 	
 		
 		//get the list of products from cart
-		var items = myCart.toString();
+		var workoutlog = myLog.toString();
 		 
  
-      $.post( "/completeCheckout", { orderby: orderby, items: items })
+      $.post( "/logWorkout", { gymnut: gymnut, workoutlog: workoutlog })
       .done(function( data ) {
         alert( "Data Loaded: " + data );
       });
@@ -265,8 +657,8 @@ $("#insertintodb").click(function() {
 });
 
 </script>
- 
 <script>
+
 //this function triggers each time a page is loaded, for sessions
 $(document).on("pagecreate",function(event){
 
@@ -282,202 +674,49 @@ $.get("/checkIfTimeLeft",function( data ) {
 	
 });
 
-
-
-$( "#goToCheckout" ).click(function() {
-
-        // update the div tag with the shopping cart
-        
-        var cartItems = myCart.toString().split(',');
-		
-        // wipe the 'products' div tag
-        $('#products').html('');
-		
-		var total = 0;
-		
-			
-        // for each record, append them to the 'products' div.
-        for(var i=0; i< cartItems.length; i++){
-		
-		var singleRecord = cartItems[i].split('-');
-		//qty ordered by cost of item
-		var itemTotal = singleRecord[1] * singleRecord[2]; 
-		total = total + itemTotal;
-            
-            $('#products').append(cartItems[i] + '<br>');
-        }
-        
-       $('#products').append("Total cost of order: "+total);
-        // move to to the checkout review
-        window.location="/#checkoutreview";
-});
-
-
-function addToCart(itemName,cost){
-    // finding out the name of the item (product) we are adding
-    var item = itemName;
-	console.log(item);
-    
-    // get the quantity
-	var qty = $('#'+item).children("option:selected").val();
-	console.log(qty);
-    
-    // search the cart and remove item if added before
-	
-    console.log("Searching to see if record already exists");
-    myCart.forEach(function(itemCurrent, index, array) {
-           
-                 
-           if(itemCurrent.includes(item,cost)){
-              console.log("Removing previous reference to " + itemName);
-                var indexx = array.indexOf(itemCurrent);
-                if (indexx !== -1) {
-                  array.splice(indexx, 1);
-                }
-           }
-    });
-    
-    
-    // add the item to the cart
-    myCart.push(item + '-' + qty + '- €'+ cost);
-    
-    alert(myCart);
-
-
-	
-	//put in the session
-	$.post("/putInSession", {cart:myCart} );
-
-}
 </script>
-<!--Manager Page-->
-<div data-role="page" id="manager">
 
+
+
+
+
+</div><!-- /content -->
+</div><!-- /page --> 
+ 
+ <!--Log Conditioning workout-->
+<div data-role="page" id="about">
+	
+	
+	
 	<div data-role="header">
-		<h1>Reports</h1>
+		<h1>About Guns'n'Buns</h1>
 		<a href="#homepage" class="ui-btn">Home</a>
 	</div><!-- /header -->
 
-	<div role="main" class="ui-content">
-		<p>Recent customer orders</p>
-         
-     <div id ="managerOutput"> 
-
+		<div role="main" class="ui-content">
+		
+		 <img src="./images/strength_icon.png" alt="strength" width="1200" height="400">
+		 <p>Guns'n'Buns came about because of one man's love of workouts and I needed inspiration for my project.</p>
+		    
+        
+		 
+       
+	<div class = "ui-btn-top">
+		<a href="#" class="ui-btn ui-icon-arrow-u ui-btn-icon-left ui-shadow ui-corner-all" >Top of page</a>  
 	</div>
 	
-	<script>
-	$.get("/getManagerData", function( data ) {
-	$('#managerOutput').html(data);
-	});
-	</script>
+	</div ><!-- /content -->
 	
-			<select id="getOrderByRange">
-			<option value = "7"> 7 days </option>
-			<option value = "30"> 30 days </option>
-			</select>
-			<button onclick="getRangeData()"> Get Range Data </button>
-			
-			<div id="rangeData">
-			</div>
-			
-			<script>
-			function getRangeData(){
-			
-			var range = $('#getOrderByRange').children("option:selected").val();
-			
-			$.post( "/getRangeData", { range: range} )
-              .done(function( data ) {
-                $('#rangeData').html(data);
-              });
-			
-			}
-			
-			
-			
-			</script>
-			
-	</div><!-- /content -->
- </div><!-- /page --> 
- 
-<!--Driver Page-->
-<div data-role="page" id="driver">
-
-	<div data-role="header">
-		<h1>Driver Dashboard</h1>
-		<a href="#homepage" class="ui-btn">Home</a>
-	</div><!-- /header -->
-    <script
-  
-  src="https://code.jquery.com/jquery-3.6.0.js"
-  integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
-  crossorigin="anonymous">
-  </script>
-<span>Your current location is the city of <span><div id="location"></div></span> The current temperature is <span><div id="currentTemp"></div></span>
- <script>
-
-
-$.getJSON( "http://api.weatherstack.com/current?access_key=e01f81992b8fa49e7fb20914c3b2d8db&query=Cork", function( json ) {
-  console.log("JSON Data: " +json.current.temperature +json.location.name); 
-  
-  $('#currentTemp').html(json.current.temperature);
-  $('#location').html (json.location.name);
-  
- });
-</script>
-
-	<div role="main" class="ui-content">
-		<h2><p>Orders for Delivery</p></h2>
-         
-     <div id ="driverOutput"> 
-
-	</div>	
-</div><!-- /content -->
-</div><!-- /page --> 
- 
- <script>
-
-
-$.getJSON( "http://api.weatherstack.com/current?access_key=e01f81992b8fa49e7fb20914c3b2d8db&query=Cork", function( json ) {
-  console.log("JSON Data: " +json.current.temperature +json.location.name); 
-  
-  $('#currentTemp').html(json.current.temperature);
-  $('#location').html (json.location.name);
-  
- });
-</script>
-       
-        
-
-<script>
-function markAsDelivered(id){
-
-    
-    
-    $.post( "/updateOrderStatus", { id: id })
-  .done(function( data ) {
-    alert( "Data Loaded: " + data );
-  });
-    
-}
-
-
-function deleteOrder(id){
-
-    
-    
-    $.post( "/deleteOrder", { id: id })
-  .done(function( data ) {
-    alert( "Data Loaded: " + data );
+	<div data-role ="footer" >
 	
-   location.reload();
-    
-  });
-    
-}
-
-</script>
-
-</div><!-- /content -->
-</div><!-- /page --> 
- 
+	<div data-role = "navbar">
+		<ul>
+			<li><a href ="#homepage" data-icon ="home">Home</a></li>
+			<li><a href ="#register" data-icon="star">Register</a></li>
+			<li><a href ="#about" data-icon="heart">About</a></li>
+		</ul>
+		</ul>
+	</div><!-- /navbar -->
+	</div><!-- /footer -->
+	</div><!-- /page -->
 

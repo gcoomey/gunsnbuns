@@ -34,199 +34,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/test', testRouter);
 
-
-app.get('/getDriverData', function (req, res) {
-   
-   
-  // put the data in the database
-  // pulling in mysql
-  var mysql = require('mysql');
-   // set up a connection  
-  var con = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  database: "test",
-  password: ""
-  });
-  
-  
-   
-// hold the data that we going to send back.
-var output = '';
-
-
-  con.connect(function(err) {
-  if (err) throw err;
-  con.query("SELECT id, orderby, items FROM orders;", function (err, result, fields) {
-    if (err) throw err;
-    console.log(result);
-   
-    
-    // looping over the records
-    for(var i=0; i< result.length; i++){
-        output = output + result[i].id + '--' +result[i].orderby + '--' + 
-		result[i].items + '<button onclick="markAsDelivered('+result[i].id+')">Item Delivered</button>   <button onclick="deleteOrder('+result[i].id+')"> Delete </button>        <br>';
-    }
-    
-     // return the output variable
-    res.send(output);   
-  });
-});
-
-
-  
-  
-});
-
-app.get('/testSession', function (req, res) {
-	
-	//set
-	req.session.email = 'test@domain.com';
-	
-	//get
-	var temp = req.session.email;
-
-	res.send("hello" + temp);
-	});
-
-app.get('/getManagerData', function (req, res) {
-   
-   req.session.manager = 1
-   req.session.email = ''
-   
-  // put the data in the database
-  // pulling in mysql
-  var mysql = require('mysql');
-   // set up a connection  
-  var con = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  database: "test",
-  password: ""
-  });
-  
-  
-   
-// hold the data that we going to send back.
-var output = '';
-
-
-  con.connect(function(err) {
-  if (err) throw err;
-  con.query("SELECT orderby, items FROM orders;", function (err, result, fields) {
-    if (err) throw err;
-    console.log(result);
-   
-   var runningTotal = 0; 
-    
-    // looping over the records
-    for(var i=0; i< result.length; i++){
-        output = output + result[i].orderby + '---' + result[i].items + '<br>';
-    // calculate cost
-             var items = result[i].items;
-	
-			var singleTransaction = items.split(',');
-			// loop over all the items in a single transaction
-            
-            for(var x=0; x<singleTransaction.length; x++){
-                  console.log(singleTransaction[x]);
-                  
-                  var singleProduct = singleTransaction[x].split('-');
-                                     // qty           *        itemCost
-                  var cost = Number(singleProduct[1]) * Number(singleProduct[2]);
-                  console.log(cost);
-                  
-                  // add to running total
-                  runningTotal = Number(runningTotal) + Number(cost);
-	
-	
-			}
-	
-			console.log('----- Next transaction')
-	}
-    output = output + 'Total order cost: ' + runningTotal;
-	
-     // return the output variable
-    res.send(output);   
-  });
-});
-
-
-  
-  
-});
-
-app.post('/getRangeData', function (req, res) {
-   
-   // the last week or the last month
-   var range = req.body.range;
-   
-    
-   // put the data in the database
-  // pulling in mysql
-  var mysql = require('mysql');
-   // set up a connection  
-  var con = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  database: "test",
-  password: ""
-  });
-  
- //hold the order data to send back to the manager
-var output = '';
-
-var sql = "SELECT orderby, items FROM orders WHERE  DATEDIFF(NOW(), `datestamp`) < "+ range;
-
-console.log("range is "+range);
-console.log(sql);
-  
-   con.connect(function(err) {
-  if (err) throw err;
-  con.query(sql, function (err, result, fields) {
-    if (err) throw err;
-    console.log(result);
-	
-	var runningTotal = 0;
-	 // looping over the records
-    for(var i=0; i< result.length; i++){
-        output = output + result[i].orderby + '---' + result[i].items + '<br>';
-    // calculate cost
-             var items = result[i].items;
-	
-			var singleTransaction = items.split(',');
-			// loop over all the items in a single transaction
-            
-            for(var x=0; x<singleTransaction.length; x++){
-                  console.log(singleTransaction[x]);
-                  
-                  var singleProduct = singleTransaction[x].split('-');
-                                     // qty           *        itemCost
-                  var cost = Number(singleProduct[1]) * Number(singleProduct[2]);
-                  console.log(cost);
-                  
-                  // add to running total
-                  runningTotal = Number(runningTotal) + Number(cost);
-	
-	
-			}
-	
-			console.log('----- Next transaction')
-	}
-    output = output + 'Total order cost: ' + runningTotal;
-	
-     // return the output variable
-    res.send(output);   
-  });
-});
-
-
-  
-  
-});
-	
-
-
+//check that the user details entered match a users on the users table of the database
 app.post('/checkTheLogin', function (req, res) {
    
    // catching the variables
@@ -236,7 +44,7 @@ app.post('/checkTheLogin', function (req, res) {
   //setting the user name into the session
   req.session.username = username;
   req.session.validSession = true;
-  
+ //for sessions
   var timeLeft = req.session.cookie.maxAge/ 1000;
   console.log("Time left" + timeLeft);  
   
@@ -249,7 +57,7 @@ app.post('/checkTheLogin', function (req, res) {
   var con = mysql.createConnection({
   host: "localhost",
   user: "root",
-  database: "test",
+  database: "gnb",
   password: ""
   });
   
@@ -271,14 +79,19 @@ app.post('/checkTheLogin', function (req, res) {
    
 });
 
-
+//inserting new user registration details
 
 app.post('/putInDatabase', function (req, res) {
   
   // catching the variables
+  var firstname = req.body.firstname;
+  var lastname = req.body.lastname;
   var username = req.body.username;
   var email = req.body.email;
   var pass = req.body.password;
+  var height = req.body.height;
+  var age = req.body.age;
+  var weight = req.body.weight;
   var acctype = req.body.acctype;
   
   // put the data in the database
@@ -290,7 +103,7 @@ app.post('/putInDatabase', function (req, res) {
   var con = mysql.createConnection({
   host: "localhost",
   user: "root",
-  database: "test",
+  database: "gnb",
   password: ""
   });
   
@@ -298,7 +111,7 @@ app.post('/putInDatabase', function (req, res) {
   con.connect(function(err) {
   if (err) throw err;
   console.log("Connected!");
-  var sql = "INSERT INTO `test`.`users` (`username`, `email`, `password`, `acctype`) VALUES ('"+username+"', '"+email+"', '"+pass+"', '"+acctype+"');";
+  var sql = "INSERT INTO `gnb`.`users` (`firstname`, `lastname`, `username`, `email`, `password`, `height`, `age`, `weight`, `acctype` )  VALUES ('"+firstname+"', '"+lastname+"',  '"+username+"', '"+email+"', '"+pass+"', '"+height+"', '"+age+"', '"+weight+"', '"+acctype+"');";
   console.log(sql);
   con.query(sql, function (err, result) {
     if (err) throw err;
@@ -310,20 +123,8 @@ app.post('/putInDatabase', function (req, res) {
   
 })
 
-app.get('/checkIfTimeLeft', function (req, res) {
-var timeLeft = req.session.cookie.maxAge/ 1000;
-console.log(timeLeft);
-
-  if(timeLeft<1){
-	  
-	  res.send('expired');
-	  
-  }else{
-	  res.send('ok');
-  }
-  
-});
-app.get('/getProducts', function (req, res) {
+//requesting the various exercise types from the database
+app.get('/getMovements', function (req, res) {
    
    
   // put the data in the database
@@ -333,44 +134,35 @@ app.get('/getProducts', function (req, res) {
   var con = mysql.createConnection({
   host: "localhost",
   user: "root",
-  database: "test",
+  database: "gnb",
   password: ""
   });
   
   
     con.connect(function(err) {
   if (err) throw err;
-  con.query("SELECT * from products", function (err, result, fields) {
+  con.query("SELECT * from exercisegroup", function (err, result, fields) {
     if (err) throw err;
    
     
-    var output = '';
+    
+	var output = '';
     for(var i=0; i < result.length; i++){
         
 
        output = output + `
-       
-       <img src="`+result[i].picturepath+`" style="height:100px;width:100px">
-       
        <div class="ui-field-contain">
-            <label for="select-native-2">`+result[i].productname+`</label>
-           
-        <select id="`+result[i].productname+`_qty" name="select-native-2" id="select-native-2" data-mini="true">
-                <option value=""></option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-            </select>
-         <br>   
-         Price: `+result[i].cost+`   
-        
-        <br>
-        <button id="addtocart" onclick="addToCart('`+result[i].productname+`_qty', `+result[i].cost+`)"> Add To Cart </button>
-		<button onclick="deleteOrder('+result[i].id+')">Delete from Order</button> 
-        </div>    
-        `;
+       <label for="select-native-2">`+result[i].group+`</label>
+       </div> 
+	   
+       <img src="`+result[i].picturepath+`" style="height:100px;width:300px">
+       <button id= "logWorkout" onclick="logWorkout('`+result[i].group+`')" class ="ui-logbtn">Log your `+result[i].group+` workout</button>
+	   
+	     
+		
+      `;  
 
+ 
     }
     
 
@@ -387,12 +179,191 @@ app.get('/getProducts', function (req, res) {
   
 });
 
-app.post('/completeCheckout', function (req, res) {
+//displaying the exercises from the strength table and allowing the users to add their details for each type
+app.get('/getStrength', function (req, res) {
+   
+   
+  // put the data in the database
+  // pulling in mysql
+  var mysql = require('mysql');
+   // set up a connection  
+  var con = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  database: "gnb",
+  password: ""
+  });
+  
+  
+    con.connect(function(err) {
+  if (err) throw err;
+  con.query("SELECT * from strength", function (err, result, fields) {
+    if (err) throw err;
+   
+    
+    var output = '';
+    for(var i=0; i < result.length; i++){
+        
+
+       output = output + `
+	   
+       <div class="ui-field-contain">
+       <label for="select-native-2">`+result[i].moveid+`</label> <br>
+		</div>
+		</br>
+		Sets 
+		<input type="text" id="`+result[i].moveid+`_sets" width ="50px"/> <br>
+		</br>
+		Reps <input type="text" id="`+result[i].moveid+`_reps"/> <br>
+		</br>
+		Time/Intervals <input type="text" id="`+result[i].moveid+`_intervals"/> <br>
+        <br></br>
+		<button id="addtolog" onclick="addToLog('`+result[i].moveid+`_sets','`+result[i].moveid+`_reps','`+result[i].moveid+`_intervals')"> Save </button>	
+					
+		`;  
+        
+    }
+    
+
+    
+    res.send(output);
+    
+    
+    
+  });
+});
+
+  
+  
+  
+});  
+
+
+
+//displaying the exercises from the conditioning table and allowing the users to add their details for each type
+
+app.get('/getConditioning', function (req, res) {
+   
+   
+  // put the data in the database
+  // pulling in mysql
+  var mysql = require('mysql');
+   // set up a connection  
+  var con = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  database: "gnb",
+  password: ""
+  });
+  
+  
+    con.connect(function(err) {
+  if (err) throw err;
+  con.query("SELECT * from conditioning", function (err, result, fields) {
+    if (err) throw err;
+   
+    
+    var output = '';
+    for(var i=0; i < result.length; i++){
+        
+
+       output = output + `
+	   
+       <div class="ui-field-contain">
+       <label for="select-native-2">`+result[i].moveid+`</label> <br>
+		</div>
+		</br>
+		Sets <input type="text" id="`+result[i].moveid+`_sets" width ="50px"/> <br>
+		</br>
+		Reps <input type="text" id="`+result[i].moveid+`_reps"/> <br>
+		</br>
+		Time/Intervals <input type="text" id="`+result[i].moveid+`_intervals"/> <br>
+        <br></br>
+		<button id="addtolog" onclick="addToLog('`+result[i].moveid+`_sets','`+result[i].moveid+`_reps','`+result[i].moveid+`_intervals')"> Save </button>	
+					
+		`;  
+        
+    }
+    
+
+    
+    res.send(output);
+    
+    
+    
+  });
+});
+
+  
+  
+  
+}); 
+
+//displaying the exercises from the cardio table and allowing the users to add their details for each type
+app.get('/getCardio', function (req, res) {
+   
+   
+  // put the data in the database
+  // pulling in mysql
+  var mysql = require('mysql');
+   // set up a connection  
+  var con = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  database: "gnb",
+  password: ""
+  });
+  
+  
+    con.connect(function(err) {
+  if (err) throw err;
+  con.query("SELECT * from cardio", function (err, result, fields) {
+    if (err) throw err;
+   
+    
+    var output = '';
+    for(var i=0; i < result.length; i++){
+        
+
+       output = output + `
+	   
+       <div class="ui-field-contain">
+       <label for="select-native-2">`+result[i].moveid+`</label> <br>
+		</div>
+		</br>
+		Sets <input type="text" id="`+result[i].moveid+`_sets" width ="50px"/> <br>
+		</br>
+		Reps <input type="text" id="`+result[i].moveid+`_reps"/> <br>
+		</br>
+		Time/Intervals <input type="text" id="`+result[i].moveid+`_intervals"/> <br>
+        <br></br>
+		<button id="addtolog" onclick="addToLog('`+result[i].moveid+`_sets','`+result[i].moveid+`_reps','`+result[i].moveid+`_intervals')"> Save </button>	
+					
+		`;  
+        
+    }
+    
+
+    
+    res.send(output);
+    
+    
+    
+  });
+});
+
+  
+  
+  
+}); 
+
+//saving the users workout details to the workouts table
+ app.post('/logWorkout', function (req, res) {
   
  
   // catching the variables
-  var orderby = req.body.orderby;
-  var items = req.body.items;
+  var gymnut = req.body.gymnut;
+  var workoutlog = req.body.workoutlog;
    
   // put the data in the database
   // pulling in mysql
@@ -403,7 +374,7 @@ app.post('/completeCheckout', function (req, res) {
   var con = mysql.createConnection({
   host: "localhost",
   user: "root",
-  database: "test",
+  database: "gnb",
   password: ""
   });
   
@@ -411,7 +382,8 @@ app.post('/completeCheckout', function (req, res) {
   con.connect(function(err) {
   if (err) throw err;
   console.log("Connected!");
-  var sql = "INSERT INTO `test`.`orders` (`orderby`, `items`) VALUES ('"+orderby+"', '"+items+"');";
+  
+  var sql = "INSERT INTO `gnb`.`workouts` (`gymnut`, `workoutlog`)  VALUES ('"+gymnut+"', '"+workoutlog+"');";
   console.log(sql);
   con.query(sql, function (err, result) {
     if (err) throw err;
@@ -421,84 +393,13 @@ app.post('/completeCheckout', function (req, res) {
   res.send('Data went to the database');
   
   
-})
-
-app.post('/updateOrderStatus', function (req, res) {
-	
-	var id = req.body.id;
-	
-  // put the data in the database
-  // pulling in mysql
-  var mysql = require('mysql');
+}) 
+ //displating a list of all users on the users table to an admin user
+app.get('/getAdminData', function (req, res) {
+   
+ 
 
   
- // set up a connection  
-  var con = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  database: "test",
-  password: ""
-  });
-  
-  var sql = "UPDATE `test`.`orders` SET `orderstatus` = 'Delivered' WHERE `id` = "+id+";"
-  
-  console.log(sql);
-  
-  con.connect(function(err) {
-  if (err) throw err;
-  con.query(sql, function (err, result, field) {
-	  if (err) throw err;
-  
-  res.send("OK");
-  
-	
-  });
-});
-
-});
-
-
-
-
-
-app.post('/updateOrderStatus', function (req, res) {
-	
-	var id = req.body.id;
-	
-  // put the data in the database
-  // pulling in mysql
-  var mysql = require('mysql');
-
-  
- // set up a connection  
-  var con = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  database: "test",
-  password: ""
-  });
-  
-  var sql = "UPDATE `test`.`orders` SET `orderstatus` = 'Delivered' WHERE `id` = "+id+";"
-  
-  console.log(sql);
-  
-  con.connect(function(err) {
-  if (err) throw err;
-  con.query(sql, function (err, result, field) {
-	  if (err) throw err;
-  
-  res.send("OK");
-  
-	
-  });
-});
-
-});
-
-app.post('/deleteOrder', function (req, res) {
-	
-	var id = req.body.id;
-	
   // put the data in the database
   // pulling in mysql
   var mysql = require('mysql');
@@ -506,34 +407,79 @@ app.post('/deleteOrder', function (req, res) {
   var con = mysql.createConnection({
   host: "localhost",
   user: "root",
-  database: "test",
+  database: "gnb",
   password: ""
   });
   
-  var sql = "DELETE FROM `test`.`orders` WHERE  `id`="+id+";"
   
-  console.log(sql);
-  
+   
+
   con.connect(function(err) {
   if (err) throw err;
-  con.query(sql, function (err, result, fields) {
+  con.query("SELECT * FROM users;", function (err, result, fields) {
     if (err) throw err;
-  
-    res.send("ok");
+    console.log(result);
+	
+	var output = '';
+	
+    for(var i=0; i < result.length; i++){
+        
+
+       output = output + `		
+			
+			<table data-role = "table-stroke" class ="table-stroke" style = "width: 100%;">
+			<colgroup>
+				<col span="1" style="width: 10%;"></col>
+				<col span="1" style="width: 10%;"></col>
+				<col span="1" style="width: 10%;"></col>
+				<col span="1" style="width: 10%;"></col>
+				<col span="1" style="width: 10%;"></col>
+				<col span="1" style="width: 10%;"></col>
+				<col span="1" style="width: 10%;"></col>
+				<col span="1" style="width: 10%;"></col>
+				<col span="1" style="width: 10%;"></col>
+				<col span="1" style="width: 10%;"></col>
+			</colgroup>
+			<tr>
+				<td>`+result[i].id+`</td>
+				<td>`+result[i].firstname+`</td>
+				<td>`+result[i].lastname+`</td>
+				<td>`+result[i].username+`</td>
+				<td>`+result[i].email+`</td>
+				<td>`+result[i].height+`</td>
+				<td>`+result[i].weight+`</td>
+				<td>`+result[i].age+`</td>
+				<td>`+result[i].acctype+`</td>
+				
+			</tr>
+			</table>
+   			
+	
+
+       
+	     
+		
+      `;  
+
+ 
+    }
     
+
     
+ res.send(output);
     
     
     
   });
 });
 
-   
-   
   
-});
+  
+  
+}); 
+  
 
-
+    
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
@@ -552,4 +498,5 @@ app.use(function(err, req, res, next) {
 });
 
 module.exports = app;
+
 
